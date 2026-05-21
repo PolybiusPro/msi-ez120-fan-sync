@@ -9,9 +9,9 @@ UNIT_NAME="msi-ez120-sync.service"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_C="${SCRIPT_DIR}/src/ez120-sync.c"
 UNIT_SOURCE="${SCRIPT_DIR}/systemd/${UNIT_NAME}"
+BINARY_NAME="msi-ez120-sync"
 BUILD_DIR="${SCRIPT_DIR}/build"
 BUILD_BINARY="${BUILD_DIR}/${BINARY_NAME}"
-BINARY_NAME="msi-ez120-sync"
 
 run_as_root() {
     if [[ "${EUID}" -eq 0 ]]; then

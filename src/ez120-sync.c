@@ -2,8 +2,6 @@
 #include <fcntl.h>
 #include <glob.h>
 #include <linux/hidraw.h>
-#include <linux/input.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
