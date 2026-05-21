@@ -27,7 +27,6 @@ From the repository root:
 Options:
 
 - `--prefix PATH` — install prefix (default: `/usr/local`)
-- `--uninstall` — remove binary, unit, and disable the service
 - `-h`, `--help` — usage
 
 The script compiles `src/ez120-sync.c`, installs `msi-ez120-sync` to `$(prefix)/bin`, installs `systemd/msi-ez120-sync.service`, enables it at boot, and starts it.
@@ -45,12 +44,23 @@ systemctl status msi-ez120-sync.service
 ├── src/ez120-sync.c          # HID sync tool source
 ├── systemd/msi-ez120-sync.service
 ├── install.sh                # build, install, enable service
+├── uninstall.sh              # remove binary and disable service
 ├── Makefile
+├── LICENSE
 └── README.md
 ```
 
 ## Uninstall
 
 ```bash
-./install.sh --uninstall
+./uninstall.sh
 ```
+
+Options:
+
+- `--prefix PATH` — must match the prefix used at install time (default: `/usr/local`)
+- `-h`, `--help` — usage
+
+## License
+
+MIT — see [LICENSE](LICENSE).
