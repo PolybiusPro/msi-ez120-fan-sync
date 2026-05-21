@@ -13,7 +13,7 @@ Linux utility that sends a HID feature report to the MSI EZ120 fan controller (`
 
 ```bash
 make
-./msi-ez120-sync
+./build/msi-ez120-sync
 ```
 
 ## Install
@@ -42,6 +42,7 @@ systemctl status msi-ez120-sync.service
 ```
 .
 ├── src/ez120-sync.c          # HID sync tool source
+├── build/                    # compiled binary (gitignored)
 ├── systemd/msi-ez120-sync.service
 ├── install.sh                # build, install, enable service
 ├── uninstall.sh              # remove binary and disable service

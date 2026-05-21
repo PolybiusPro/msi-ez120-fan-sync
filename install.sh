@@ -9,6 +9,8 @@ UNIT_NAME="msi-ez120-sync.service"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_C="${SCRIPT_DIR}/src/ez120-sync.c"
 UNIT_SOURCE="${SCRIPT_DIR}/systemd/${UNIT_NAME}"
+BUILD_DIR="${SCRIPT_DIR}/build"
+BUILD_BINARY="${BUILD_DIR}/${BINARY_NAME}"
 BINARY_NAME="msi-ez120-sync"
 
 run_as_root() {
@@ -37,21 +39,21 @@ build_binary() {
 }
 
 install_files() {
-    local tmp_binary
-    tmp_binary="$(mktemp)"
-    trap 'rm -f "${tmp_binary}"' RETURN
+    local binary_to_install
 
     if [[ -f "${SOURCE_C}" ]]; then
-        build_binary "${tmp_binary}"
-    elif [[ -f "${SCRIPT_DIR}/msi-ez120-sync" ]]; then
-        cp "${SCRIPT_DIR}/msi-ez120-sync" "${tmp_binary}"
+        mkdir -p "${BUILD_DIR}"
+        build_binary "${BUILD_BINARY}"
+        binary_to_install="${BUILD_BINARY}"
+    elif [[ -f "${BUILD_BINARY}" ]]; then
+        binary_to_install="${BUILD_BINARY}"
     else
-        echo "error: need src/ez120-sync.c or a prebuilt msi-ez120-sync binary" >&2
+        echo "error: need src/ez120-sync.c or ${BUILD_BINARY}" >&2
         exit 1
     fi
 
     run_as_root install -d "${BINDIR}"
-    run_as_root install -m 755 "${tmp_binary}" "${BINDIR}/${BINARY_NAME}"
+    run_as_root install -m 755 "${binary_to_install}" "${BINDIR}/${BINARY_NAME}"
 
     if [[ ! -f "${UNIT_SOURCE}" ]]; then
         echo "error: ${UNIT_SOURCE} not found" >&2

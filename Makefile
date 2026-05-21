@@ -2,14 +2,18 @@ PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
 CFLAGS ?= -O2 -Wall -Wextra
 
-TARGET = msi-ez120-sync
+BUILDDIR = build
+TARGET = $(BUILDDIR)/msi-ez120-sync
 SRC = src/ez120-sync.c
 
 .PHONY: all install clean
 
 all: $(TARGET)
 
-$(TARGET): $(SRC)
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+
+$(TARGET): $(SRC) | $(BUILDDIR)
 	gcc $(CFLAGS) -o $@ $<
 
 install: $(TARGET)
@@ -17,4 +21,4 @@ install: $(TARGET)
 	install -m 755 $(TARGET) "$(DESTDIR)$(BINDIR)/$(TARGET)"
 
 clean:
-	rm -f $(TARGET)
+	rm -rf $(BUILDDIR)
