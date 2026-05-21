@@ -6,6 +6,7 @@ PREFIX="${PREFIX:-/usr/local}"
 BINDIR="${PREFIX}/bin"
 SYSTEMD_DIR="/etc/systemd/system"
 UNIT_NAME="msi-ez120-sync.service"
+UDEV_RULES="/etc/udev/rules.d/99-msi-ez120-sync.rules"
 BINARY_NAME="msi-ez120-sync"
 
 run_as_root() {
@@ -22,8 +23,12 @@ run_as_root() {
 uninstall() {
     run_as_root systemctl disable --now "${UNIT_NAME}" 2>/dev/null || true
     run_as_root rm -f "${SYSTEMD_DIR}/${UNIT_NAME}"
+    run_as_root rm -f "${UDEV_RULES}"
     run_as_root rm -f "${BINDIR}/${BINARY_NAME}"
     run_as_root systemctl daemon-reload
+    if command -v udevadm >/dev/null 2>&1; then
+        run_as_root udevadm control --reload-rules
+    fi
     echo "Uninstalled ${BINARY_NAME}."
 }
 

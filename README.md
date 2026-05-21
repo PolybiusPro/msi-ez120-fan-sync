@@ -1,6 +1,6 @@
 # MSI EZ120 Fan Sync
 
-Linux utility that sends a HID feature report to the MSI EZ120 fan controller (`0db0:1f1e`) so fan speeds stay in sync. A systemd oneshot unit runs it at boot with retries until the device appears.
+Linux utility that sends a HID feature report to the MSI EZ120 fan controller (`0db0:1f1e`) so fan speeds stay in sync. A udev rule starts a oneshot systemd unit when the device appears (boot or hotplug), without blocking boot.
 
 ## Requirements
 
@@ -29,7 +29,7 @@ Options:
 - `--prefix PATH` — install prefix (default: `/usr/local`)
 - `-h`, `--help` — usage
 
-The script compiles `src/ez120-sync.c`, installs `msi-ez120-sync` to `$(prefix)/bin`, installs `systemd/msi-ez120-sync.service`, enables it at boot, and starts it.
+The script compiles `src/ez120-sync.c`, installs `msi-ez120-sync` to `$(prefix)/bin`, installs the systemd unit and udev rule, and runs sync once if the device is already connected.
 
 Check status:
 
@@ -44,7 +44,8 @@ systemctl status msi-ez120-sync.service
 ├── src/ez120-sync.c          # HID sync tool source
 ├── build/                    # compiled binary (gitignored)
 ├── systemd/msi-ez120-sync.service
-├── install.sh                # build, install, enable service
+├── udev/99-msi-ez120-sync.rules
+├── install.sh                # build, install, udev trigger
 ├── uninstall.sh              # remove binary and disable service
 ├── Makefile
 ├── LICENSE

@@ -1,0 +1,3 @@
+# MSI EZ120 (0db0:1f1e) — run sync when the device is added (boot or hotplug).
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0db0", ATTR{idProduct}=="1f1e", \
+  RUN+="/usr/bin/systemctl start --no-block msi-ez120-sync.service"

@@ -1,13 +1,8 @@
 [Unit]
 Description=MSI EZ120 fan controller sync
-After=multi-user.target systemd-udev-settle.service
-Wants=systemd-udev-settle.service
+# Started by udev when USB device 0db0:1f1e appears — not enabled for boot.
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-# HID devices may appear shortly after boot; retry for up to ~30s.
-ExecStart=/bin/sh -c 'for i in $(seq 1 15); do /usr/local/bin/msi-ez120-sync && exit 0; sleep 2; done; /usr/local/bin/msi-ez120-sync; exit 1'
-
-[Install]
-WantedBy=multi-user.target
+ExecStart=/usr/local/bin/msi-ez120-sync

@@ -9,6 +9,9 @@ UNIT_NAME="msi-ez120-sync.service"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_C="${SCRIPT_DIR}/src/ez120-sync.c"
 UNIT_SOURCE="${SCRIPT_DIR}/systemd/${UNIT_NAME}"
+UDEV_RULES_NAME="99-msi-ez120-sync.rules"
+UDEV_RULES_SOURCE="${SCRIPT_DIR}/udev/${UDEV_RULES_NAME}"
+UDEV_RULES_DIR="/etc/udev/rules.d"
 BINARY_NAME="msi-ez120-sync"
 BUILD_DIR="${SCRIPT_DIR}/build"
 BUILD_BINARY="${BUILD_DIR}/${BINARY_NAME}"
@@ -59,17 +62,28 @@ install_files() {
         echo "error: ${UNIT_SOURCE} not found" >&2
         exit 1
     fi
-    run_as_root install -m 644 "${UNIT_SOURCE}" "${SYSTEMD_DIR}/${UNIT_NAME}"
+    if [[ ! -f "${UDEV_RULES_SOURCE}" ]]; then
+        echo "error: ${UDEV_RULES_SOURCE} not found" >&2
+        exit 1
+    fi
 
-    # Patch ExecStart path if PREFIX is not /usr/local
+    run_as_root install -m 644 "${UNIT_SOURCE}" "${SYSTEMD_DIR}/${UNIT_NAME}"
+    run_as_root install -m 644 "${UDEV_RULES_SOURCE}" "${UDEV_RULES_DIR}/${UDEV_RULES_NAME}"
+
+    # Patch binary path in unit if PREFIX is not /usr/local
     if [[ "${PREFIX}" != "/usr/local" ]]; then
         run_as_root sed -i "s|/usr/local/bin/${BINARY_NAME}|${BINDIR}/${BINARY_NAME}|g" \
             "${SYSTEMD_DIR}/${UNIT_NAME}"
     fi
 
+    # Drop legacy boot enable (was WantedBy=multi-user + udev-settle + 30s retry)
+    run_as_root systemctl disable --now "${UNIT_NAME}" 2>/dev/null || true
+
     run_as_root systemctl daemon-reload
-    run_as_root systemctl enable "${UNIT_NAME}"
-    run_as_root systemctl restart "${UNIT_NAME}" || true
+    run_as_root udevadm control --reload-rules
+    run_as_root udevadm trigger --action=add --subsystem-match=usb \
+        --attr-match=idVendor=0db0 --attr-match=idProduct=1f1e 2>/dev/null || true
+    run_as_root systemctl start "${UNIT_NAME}" 2>/dev/null || true
 }
 
 usage() {
@@ -118,7 +132,7 @@ main() {
 
     install_files
     echo "Installed ${BINDIR}/${BINARY_NAME}"
-    echo "Enabled ${UNIT_NAME} (runs at boot)."
+    echo "Udev rule installed — sync runs when device 0db0:1f1e appears (not at every boot)."
     echo "Check status: systemctl status ${UNIT_NAME}"
 }
 
