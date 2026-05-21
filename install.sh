@@ -70,14 +70,6 @@ install_files() {
     run_as_root systemctl restart "${UNIT_NAME}" || true
 }
 
-uninstall() {
-    run_as_root systemctl disable --now "${UNIT_NAME}" 2>/dev/null || true
-    run_as_root rm -f "${SYSTEMD_DIR}/${UNIT_NAME}"
-    run_as_root rm -f "${BINDIR}/${BINARY_NAME}"
-    run_as_root systemctl daemon-reload
-    echo "Uninstalled ${BINARY_NAME}."
-}
-
 usage() {
     cat <<EOF
 Usage: $(basename "$0") [OPTIONS]
@@ -86,7 +78,6 @@ Install ${BINARY_NAME} and enable it at boot (systemd).
 
 Options:
   --prefix PATH   Install prefix (default: /usr/local)
-  --uninstall     Remove binary, unit, and disable service
   -h, --help      Show this help
 
 Environment:
@@ -95,7 +86,6 @@ Environment:
 Examples:
   ./install.sh
   sudo ./install.sh --prefix /usr
-  ./install.sh --uninstall
 EOF
 }
 
@@ -106,10 +96,6 @@ main() {
                 PREFIX="$2"
                 BINDIR="${PREFIX}/bin"
                 shift 2
-                ;;
-            --uninstall)
-                uninstall
-                exit 0
                 ;;
             -h|--help)
                 usage
