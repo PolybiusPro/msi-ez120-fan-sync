@@ -10,6 +10,7 @@
 #define VENDOR_ID  0x0db0
 #define PRODUCT_ID  0x1f1e
 #define PAYLOAD_LEN 32
+#define POST_PAYLOAD_US 5000
 
 /* HID feature reports from fan-control.py */
 static const unsigned char payloads[][PAYLOAD_LEN] = {
@@ -68,6 +69,9 @@ static int send_feature_reports(const char *devnode) {
     for (size_t i = 0; i < payload_count; i++) {
         if (send_payload(devnode, payloads[i], i) < 0) {
             return -1;
+        }
+        if (i + 1 < payload_count) {
+            usleep(POST_PAYLOAD_US);
         }
     }
 
