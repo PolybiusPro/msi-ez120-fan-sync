@@ -10,7 +10,7 @@
 #define VENDOR_ID  0x0db0
 #define PRODUCT_ID  0x1f1e
 #define PAYLOAD_LEN 32
-#define POST_PAYLOAD_US 5000
+#define POST_PAYLOAD_US 100000
 
 /* HID feature reports from fan-control.py */
 static const unsigned char payloads[][PAYLOAD_LEN] = {
