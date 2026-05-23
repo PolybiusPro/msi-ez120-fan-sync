@@ -1,13 +1,18 @@
 # MSI EZ120 Fan Sync
 
-Linux utility that sends a HID feature report to the MSI EZ120 fan controller (`0db0:1f1e`) so fan speeds are synced to the motherboard. A udev rule starts a oneshot systemd unit when the device appears (boot or hotplug), without blocking boot.
+Linux utility that sends HID feature reports to the MSI EZ120 fan controller (`0db0:1f1e`) so fan speeds and fan lighting are synced to the motherboard. A udev rule starts a oneshot systemd unit when the device appears (boot or hotplug), without blocking boot.
+
+## Clone
+
+```bash
+git clone https://github.com/PolybiusPro/msi-ez120-fan-sync.git
+cd msi-ez120-fan-sync
+```
 
 ## Requirements
 
-- Linux with `hidraw` support
 - `gcc` (to build from source)
 - `systemd` (for the install script and service unit)
-- Root or `sudo` to install
 
 ## Build
 
