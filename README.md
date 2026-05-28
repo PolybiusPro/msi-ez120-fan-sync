@@ -1,6 +1,6 @@
 # MSI EZ120 Fan Sync
 
-Linux utility that sends HID feature reports to the MSI EZ120 fan controller (`0db0:1f1e`) so fan speeds and fan lighting are synced to the motherboard. A udev rule starts a oneshot systemd unit when the device appears (boot or hotplug), without blocking boot.
+Linux utility that sends HID feature reports to the MSI EZ120 fan controller (`0db0:1f1e`) so fan speeds and fan lighting are synced to the motherboard. A udev rule starts a oneshot systemd unit when the device appears.
 
 ## Clone
 
@@ -67,6 +67,9 @@ Options:
 
 - `--prefix PATH` — must match the prefix used at install time (default: `/usr/local`)
 - `-h`, `--help` — usage
+
+> [!NOTE]
+> If trying to set fan RGB in OpenRGB, you may encounter some issues with some of the LEDs refusing to light up due to the software not recognizing all of the LED nodes. As a workaround, you can set the colors in MysticLight on Windows and they should persist when booting into Linux. Just make sure that OpenRGB doesn't overwrite your motherboard config if you decide to continue using it.
 
 ## License
 
